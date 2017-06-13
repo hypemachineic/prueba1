@@ -11,7 +11,7 @@ namespace SistemaRentabilidad.Controllers
     [Authorize(Users = "urdirom-dist@hotmail.com")]
     public class HomeController : Controller
     {
-        private ContextSR b = new ContextSR();
+        private ContextSR db = new ContextSR();
 
         [AllowAnonymous]
         public ActionResult Index()
