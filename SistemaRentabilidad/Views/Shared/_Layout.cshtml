@@ -1,0 +1,294 @@
+﻿@using Microsoft.AspNet.Identity;
+@using SistemaRentabilidad.Controllers
+<!DOCTYPE html>
+
+<html>
+<head>
+
+
+    @Styles.Render("~/Styles/css")
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        .table-bordered {
+            border: 1.5px !important;
+        }
+
+        center {
+            display: none !important;
+        }
+
+        #loadOverlay {
+            display: none;
+        }
+
+          #loader {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba( 255, 255, 255, .8 ) url("/Content/Images/ajax-loader.gif") 50% 50% no-repeat;
+        }
+        /* Sticky footer styles
+        -------------------------------------------------- */
+        html,
+        body {
+            height: 100%;
+            /* The html and body elements cannot have any padding or margin. */
+        }
+
+        /* Wrapper for page content to push down footer */
+        #wrap {
+            min-height: 100%;
+            height: auto !important;
+            height: 100%;
+            /* Negative indent footer by it's height */
+            margin: 0 auto -30px;
+        }
+
+        #push,
+        #footer {
+            height: 30px;
+        }
+
+        #footer {
+            background-color: transparent;
+        }
+
+        @@media screen and (max-width: 767px) {
+            .ayuda {
+                display: none;
+            }
+        }
+        /* Lastly, apply responsive CSS fixes as necessary */
+        @@media (max-width: 767px) {
+            #footer {
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+        }
+
+        @@media (max-width: 1200px) {
+            .navbar-fixed-top {
+                font-size: smaller;
+            }
+
+            .ayuda {
+                display: none;
+            }
+        }
+
+        @@media (max-width: 767px) {
+            .navbar-fixed-top {
+                font-size: inherit;
+            }
+
+            #ocu {
+                display: none !important;
+            }
+
+            #mo {
+                display: none !important;
+            }
+
+            #nu {
+                display: initial !important;
+            }
+        }
+
+        .progress.active .progress-bar {
+            -webkit-transition: none !important;
+            transition: none !important;
+        }
+
+        .hvr-bubble-float-right:before {
+            border-color: transparent transparent transparent cornflowerblue;
+        }
+
+        .hvr-bubble-float-left:before {
+            border-color: transparent grey transparent transparent;
+        }
+    </style>
+</head>
+
+<body class="full" background='@Url.Content("~/Content/Images/fon 1.jpg")'>
+    <div id="wrap">
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @*<a href="@Url.Action("Index", "Home")">Inicio</a>*@
+                    @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "navbar-brand hvr-bounce-in" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown" style="left: auto">
+                            <a class="dropdown-toggle hvr-underline-from-center" data-toggle="dropdown" href="#" id="download">Planillas<span class="caret"></span></a>
+                            <ul class="dropdown-menu" aria-labelledby="download">
+                                <li style="font-weight: bold;">@Html.ActionLink("Listado", "Index", "Worksheets")</li>
+                                <li style="font-weight: bold;">@Html.ActionLink("Nueva", "CreateWs", "Worksheets")</li>
+
+                            </ul>
+                        </li>
+                        <li class="hvr-underline-from-center">@Html.ActionLink("Estadísticas", "Index", "Statistics")</li>
+                        <li class="dropdown" style="left: auto">
+                            <a class="dropdown-toggle hvr-underline-from-center" data-toggle="dropdown" href="#" id="download">Configuración<span class="caret"></span></a>
+                            <ul class="dropdown-menu" aria-labelledby="download">
+                                <li style="font-weight: bold;">@Html.ActionLink("Transacciones Predefinidas", "Index", "Transactions")</li>
+                                <li style="font-weight: bold;">@Html.ActionLink("Editar sugerencias", "Index", "SheetLines")</li>
+                                <li style="font-weight: bold;">@Html.ActionLink("Cambiar contraseña", "Index", "Manage")</li>
+
+                            </ul>
+                        </li>
+                        <li class="hvr-underline-from-center">@Html.ActionLink("Contacto", "Contact", "Home")</li>
+
+                        @if (User.Identity.Name == "urdirom-dist@hotmail.com")
+                        {
+                            <li id="mo" class="hvr-underline-from-center"><a class="hvr-bubble-float-right "><span class="glyphicon glyphicon-search "></span></a></li>
+                            <li id="ocu" class="hvr-underline-from-center" style="display: none"><a class="hvr-bubble-float-left"><span class="glyphicon glyphicon-remove"></span></a></li>
+                            <li id="nu" style="display: none">
+
+                                @using (Html.BeginForm("FindW", "Worksheets", FormMethod.Post, new { id = "buscarplanilla" }))
+                                {
+                                    <div class="input-group date" style="display: inline-flex; margin-top: 15px">
+                                        <input type="text" class="form-control" onchange="valfechaf()" id="fdate" name="fdate" placeholder="Mes/Año" style="height: 25px; font-size: small; font-style: italic; width: 120px; padding-left: 0px; padding-right: 0px; ; padding-top: 2px; padding-bottom: 2px; text-align: center" />
+                                        <button type="submit" id="buscarf" disabled="true" class="btn btn-info btn-xs disabled"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                        @*<input type='submit' value='Buscar' id="buscarf" disabled="true" class="btn btn-info btn-xs disabled" />*@
+
+
+                                    </div>
+                                }
+
+
+
+
+                            </li>
+
+                        }
+                    </ul>
+
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+        <div class="container body-content upBody">
+
+            @RenderBody()
+            <div id="loader" class="text-center" style="display: none"></div>
+
+        </div>
+        @Scripts.Render("~/js")
+
+
+
+
+        @RenderSection("scripts", required: false)
+
+
+
+        <div id="push"></div>
+
+    </div>
+    <div id="footer">
+        <div class="container">
+            <p class="text-center hidden-print">
+                - Sistema Rentabilidad &copy; @DateTime.Now.Year - Godesa Solutions ® <a class="hidden-print" style="color: black">@Html.ActionLink("Contacto", "Contact", "Home")</></a> -
+            </p>
+        </div>
+    </div>
+
+</body>
+
+
+
+@if (User.Identity.Name == "urdirom-dist@hotmail.com")
+{
+    <div class="navbar-xs navbar-inverse navbar-fixed-top hidden-print" style="background: none; border: none; padding-bottom: 0px">
+        <div id="contacthide" class="container text-right" style="width: 150px;height: 20px;margin-right: 0px">
+            <p style="margin-top: 60px;">
+                <div class="btn btn-info btn-xs" style="border-radius: 3px" data-toggle="modal" data-target="#GSCCModal"><span class="ayuda">Ayuda </span><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span></div>
+            </p>
+        </div>
+    </div>}
+</html>
+
+
+<script>
+    $("#mo").click(function () {
+        $("#mo").hide();
+        $("#ocu").toggle("slow");
+        $("#nu").toggle("slow");
+
+    });
+    $("#ocu").click(function () {
+        $("#nu").toggle("slow");
+        $("#ocu").toggle("slow");
+        $("#mo").toggle("slow");
+    });
+
+    
+
+    function valfechaf() {
+       var periodo = traducirmes($('#fdate').val());
+       if (periodo == "" | periodo == null) {
+            
+            $('#buscarf').addClass("disabled");
+            $("#buscarf").prop("disabled", true);
+            $('#buscarf').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>');
+            $('#buscarf').removeClass("btn-warning");
+
+        };
+
+        var options3 = {};
+        options3.url = '@Url.Action("ExistePlanilla", "Worksheets")';
+        options3.type = "GET";
+        options3.data = { "fecha": periodo };
+        options3.dataType = "json";
+        options3.success = function (data) {
+            if (data) {
+                $('#buscarf').html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span>');
+                $('#buscarf').removeClass("btn-warning");
+                $('#buscarf').removeClass("disabled");
+                $("#buscarf").removeAttr("disabled");
+            } else {
+                $('#buscarf').html("Periodo inexistente.");
+                $('#buscarf').addClass("btn-warning");
+                $('#buscarf').addClass("disabled");
+                $("#buscarf").prop("disabled", true);
+            };
+
+        };
+        $.ajax(options3);
+
+    }
+
+    $(document).ready(function () {
+
+        $('#fdate').datepicker({
+            format: "MM/yyyy",
+            startView: 1,
+            minViewMode: 1,
+            maxViewMode: 2,
+            todayBtn: "linked",
+            clearBtn: true,
+            language: 'es',
+            autoclose: true, todayHighlight: true
+        });
+
+
+    });
+</script>
+
+

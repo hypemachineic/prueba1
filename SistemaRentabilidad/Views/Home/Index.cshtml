@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Inicio";
+}
+
+
+
+<body>
+
+
+    <div class="text-center jumbotron sombra_externa sombra_fija sombra_radial text-center thStyleGradient2 bordesRedond ">
+        <h3>
+            <b>¡Bienvenido al Sistema de Rentabilidad!</b>
+        </h3>
+        <h4>
+            <p class="fontMarca">"elGordo.com Distribuciones"</p>
+            <br />
+            <br />
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/tregar.png")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/paty.jpg")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/donyeyo.jpg")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/piamontesa.png")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/danica.png")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/elnoble.jpg")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/vanoli.jpg")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/pozo.png")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/emeth.jpg")'>
+            <img class="home" src='@Url.Content("~/Content/Images/portadaimg/vienisimalogo.png")'>
+        </h4>
+    </div>
+    @*<div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title text-center">Acceso rápido</h3>
+        </div>
+    </div>*@
+        
+            <div class="row">
+                <div class="col-lg-6">
+                    @{
+                        if (@ViewBag.lastws > 0)
+                        {
+                            <a href="@Url.Action("EditW", "Worksheets", new {id = @ViewBag.lastws})" class="btn btn-lg btn-block btn-primary">Editar última planilla <span class="glyphicon glyphicon-pencil"></span></a>
+
+                        }
+                        else
+                        {
+                            <a href="#" class="btn btn-lg btn-block btn-primary disabled " >Editar última planilla<span class="glyphicon glyphicon-pencil"></span></a>
+                        }
+                    }
+                </div>
+                <div class="col-lg-6">
+                    <a href="@Url.Action("CreateWs", "Worksheets")" class="btn btn-lg btn-block btn-primary">Crear nueva planilla <span class="glyphicon glyphicon-file"></span> </a>
+                </div>
+            </div>
+        
+    
+
+</body>
+
+
+<div id="GSCCModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 100%">
+        <div class="modal-content" style="width: 80%; left: 10%">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="font-size: xx-large">&times;  </button>
+                <h4 class="modal-title" id="myModalLabel">Ayuda</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Action("HelpHome", "Home")
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+        @@import url('https://fonts.googleapis.com/css?family=Kaushan+Script');
+
+.fontMarca {
+    font-family: 'Kaushan Script', cursive;
+   
+}
+     .home {
+         border-radius: 183px 183px 183px 183px!important;
+         -moz-border-radius: 183px 183px 183px 183px!important;
+         -webkit-border-radius: 183px 183px 183px 183px!important;
+         border: 2px solid #000000!important;
+         width: 100px!important;
+         height: 100px!important;
+        
+        
+     }
+</style>
